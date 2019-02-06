@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:alloy="http://liferay.com/faces/alloy"
+	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form>
+		<h3>#{i18n['new-entry']}</h3>
+		<br />
+		<h:outputLabel for="entryName">Name: </h:outputLabel>
+		<h:inputText id="entryName" required="true" value="#{guestbookBacking.selectedEntry.name}" />
+		<br /><br />
+		<h:outputLabel for="entryMessage">Message: </h:outputLabel>
+		<h:inputTextarea id="entryMessage" required="true" value="#{guestbookBacking.selectedEntry.message}" />
+		<br /><br />
+		<h:commandButton action="#{entryBacking.save}" styleClass="btn btn-default" value="#{i18n['save']}">
+			<f:ajax execute="@form" render="@all" />
+		</h:commandButton>
+		<h:commandButton action="#{entryBacking.cancel}" immediate="true" styleClass="btn btn-default" value="#{i18n['cancel']}">
+			<f:ajax render="@all" />
+		</h:commandButton>
+	</h:form>
+</ui:composition>
