@@ -53,7 +53,6 @@ public class GuestbookBacking extends AbstractBacking {
 	private GuestbookLocalServiceTracker guestbookLocalServiceTracker;
 	private EntryLocalServiceTracker entryLocalServiceTracker;
 
-	private Guestbook originalGuestbook;
 	private Guestbook selectedGuestbook;
 	
 	private Entry selectedEntry;
@@ -167,14 +166,6 @@ public class GuestbookBacking extends AbstractBacking {
 		this.entries = entries;
 	}
 
-	public Guestbook getOriginalGuestbook() {
-		return originalGuestbook;
-	}
-
-	public void setOriginalGuestbook(Guestbook originalGuestbook) {
-		this.originalGuestbook = originalGuestbook;
-	}
-	
 	public Entry getSelectedEntry() {
 		return selectedEntry;
 	}
