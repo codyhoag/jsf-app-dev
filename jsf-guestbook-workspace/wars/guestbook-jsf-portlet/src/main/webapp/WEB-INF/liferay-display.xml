@@ -8,8 +8,5 @@
 	<category name="category.sample">
 		<portlet id="guestbook-jsf" />
 	</category>
-	<category name="category.hidden">
-		<portlet id="guestbook-admin" />
-	</category>
 </display>
 
