@@ -140,6 +140,7 @@ public class GuestbookBacking extends AbstractBacking {
 			try {
 				EntryLocalService entryLocalService = entryLocalServiceTracker.getService();
 				entries = new ArrayList<Entry>();
+				Guestbook selectedGuestbook = getSelectedGuestbook();
 
 				if (selectedGuestbook == null) {
 					logger.info("getEntries: selectedGuestbook == null ... ");
