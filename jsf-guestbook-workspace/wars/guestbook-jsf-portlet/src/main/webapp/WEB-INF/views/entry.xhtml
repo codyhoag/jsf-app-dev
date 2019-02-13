@@ -7,20 +7,24 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<h:form>
+		<h:messages globalOnly="true" />
 		<h3>#{i18n['new-entry']}</h3>
 		<br />
 		<h:outputLabel for="entryName">Name: </h:outputLabel>
 		<br />
-		<h:inputText id="entryName" required="true" value="#{guestbookBacking.selectedEntry.name}" />
+		<h:message for="entryName" />
+		<h:inputText id="entryName" required="true" value="#{guestbookBacking.newEntry.name}" />
 		<br /><br />
 		<h:outputLabel for="entryMessage">Message: </h:outputLabel>
 		<br />
-		<h:inputTextarea id="entryMessage" required="true" value="#{guestbookBacking.selectedEntry.message}" />
+		<h:message for="entryMessage" />
+		<h:inputTextarea id="entryMessage" required="true" value="#{guestbookBacking.newEntry.message}" />
 		<br /><br />
-		<h:commandButton action="#{entryBacking.save}" styleClass="btn btn-default" value="#{i18n['save']}">
+		<h:commandButton action="#{guestbookBacking.saveNewEntry(facesContext)}" styleClass="btn btn-default"
+				value="#{i18n['save']}">
 			<f:ajax execute="@form" render="@all" />
 		</h:commandButton>
-		<h:commandButton action="#{entryBacking.cancel}" immediate="true" styleClass="btn btn-default"
+		<h:commandButton action="#{guestbookBacking.clearNewEntry}" immediate="true" styleClass="btn btn-default"
 				value="#{i18n['cancel']}">
 			<f:ajax render="@all" />
 		</h:commandButton>

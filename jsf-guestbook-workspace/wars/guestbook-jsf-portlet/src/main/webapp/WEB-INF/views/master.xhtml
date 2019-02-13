@@ -8,17 +8,19 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<h:form>
-		<h:commandButton action="#{entryBacking.add}" styleClass="btn btn-default" value=" #{i18n['add-entry']} ">
+		<h:commandButton action="#{guestbookBacking.addNewEntry}" styleClass="btn btn-default"
+				value=" #{i18n['add-entry']} ">
 			<f:ajax render="@all" />
 		</h:commandButton>
 		<br /><br />
+		<h:messages globalOnly="true" />
 		<c:choose>
-			<c:when test="#{empty guestbookBacking.entries}">
+			<c:when test="#{empty guestbookBacking.getEntries(facesContext)}">
 				<h:outputText value="#{i18n['no-entries-yet']}" />
 			</c:when>
 			<c:otherwise>
 				<h:dataTable styleClass="table table-bordered table-hover table-striped" rowClasses="table-cell "
-						value="#{guestbookBacking.entries}" var="entry">
+						value="#{guestbookBacking.getEntries(facesContext)}" var="entry">
 					<h:column>
 						<f:facet name="header"><h:outputText value="#{i18n['message']}" /></f:facet>
 						<h:panelGroup>

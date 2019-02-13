@@ -13,7 +13,7 @@
 	</h:head>
 	<h:body>
 		<c:choose>
-			<c:when test="#{guestbookBacking.editingEntry}">
+			<c:when test="#{guestbookBacking.addingNewEntry}">
 				<ui:include src="/WEB-INF/views/entry.xhtml" />
 			</c:when>
 			<c:otherwise>

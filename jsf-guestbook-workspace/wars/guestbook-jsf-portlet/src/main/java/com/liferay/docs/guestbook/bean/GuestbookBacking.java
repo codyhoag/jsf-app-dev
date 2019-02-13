@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-2014 Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2019 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,202 +13,74 @@
  */
 package com.liferay.docs.guestbook.bean;
 
-import java.util.ArrayList;
+import com.liferay.faces.util.context.FacesContextHelperUtil;
+import com.liferay.faces.util.logging.Logger;
+import com.liferay.faces.util.logging.LoggerFactory;
+import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-
-import com.liferay.docs.guestbook.service.EntryLocalService;
-import com.liferay.docs.guestbook.services.EntryLocalServiceTracker;
-import com.liferay.docs.guestbook.service.GuestbookLocalService;
-import com.liferay.docs.guestbook.services.GuestbookLocalServiceTracker;
-import com.liferay.docs.guestbook.wrappers.Entry;
-import com.liferay.docs.guestbook.wrappers.Guestbook;
-
-import com.liferay.faces.portal.context.LiferayPortletHelperUtil;
-import com.liferay.faces.util.context.FacesContextHelperUtil;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.model.Portlet;
-import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
-
 
 /**
  * @author Cody Hoag
+ * @author Kyle Stiemann
  */
 @ManagedBean
 @ViewScoped
-public class GuestbookBacking extends AbstractBacking {
+public final class GuestbookBacking {
 
-	public static final String DEFAULT_GUESTBOOK_NAME = "Main";
-	public static final String MODEL = "com.liferay.docs.guestbook";
+	private static final Logger LOGGER = LoggerFactory.getLogger(GuestbookBacking.class);
 
-	private GuestbookLocalServiceTracker guestbookLocalServiceTracker;
-	private EntryLocalServiceTracker entryLocalServiceTracker;
+	private EntryBean newEntry;
 
-	private Guestbook selectedGuestbook;
-	
-	private Entry selectedEntry;
-	private List<Entry> entries;
-
-	private boolean editingEntry;
-
-	public void editEntry() {
-		editingEntry = true;
+	public void addNewEntry() {
+		setNewEntry(new EntryBean());
 	}
 
-	@PostConstruct
-	public void postConstruct() {
-		Bundle bundle = FrameworkUtil.getBundle(this.getClass());
-		BundleContext bundleContext = bundle.getBundleContext();
-		guestbookLocalServiceTracker = new GuestbookLocalServiceTracker(bundleContext);
-		guestbookLocalServiceTracker.open();
-		entryLocalServiceTracker = new EntryLocalServiceTracker(bundleContext);
-		entryLocalServiceTracker.open();
-		
-		createMainGuestbook();
+	public void clearNewEntry() {
+		setNewEntry(null);
 	}
 
-	@PreDestroy
-	public void preDestroy() {
-		guestbookLocalServiceTracker.close();
-		entryLocalServiceTracker.close();
+	public boolean isAddingNewEntry() {
+		return newEntry != null;
 	}
 
-	public void createMainGuestbook() {
+	public EntryBean getNewEntry() {
+		return newEntry;
+	}
+
+	public void setNewEntry(EntryBean entry) {
+		this.newEntry = entry;
+	}
+
+	public void saveNewEntry(FacesContext facesContext) {
+		GuestbookManager guestbookManager = GuestbookManager.getGuestbookManager(facesContext);
 
 		try {
-
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			long scopeGroupId = LiferayPortletHelperUtil.getScopeGroupId(facesContext);
-			GuestbookLocalService guestbookLocalService = guestbookLocalServiceTracker.getService();
-
-			com.liferay.docs.guestbook.model.Guestbook defaultGuestbook = (com.liferay.docs.guestbook.model.Guestbook)
-				guestbookLocalService.getFirstGuestbookByName(scopeGroupId, DEFAULT_GUESTBOOK_NAME);
-
-			// Create the default guestbook if it does not exist in the database
-			if (defaultGuestbook == null) {
-				logger.info("postConstruct: creating a default guestbook named " + DEFAULT_GUESTBOOK_NAME + " ...");
-
-				Guestbook guestbook = new Guestbook(guestbookLocalService.createGuestbook(0L));
-				guestbook.setName(DEFAULT_GUESTBOOK_NAME);
-				guestbook.setGroupId(scopeGroupId);
-				guestbook.setCompanyId(LiferayPortletHelperUtil.getCompanyId(facesContext));
-				guestbook.setUserId(LiferayPortletHelperUtil.getUserId(facesContext));
-				guestbookLocalService.addGuestbook(guestbook);
-			}
+			guestbookManager.addEntry(facesContext, newEntry);
+			clearNewEntry();
 		}
-		catch (Exception e) {
-			e.printStackTrace();
+		catch (GuestbookManager.UnableToAddEntryException e) {
+			FacesContextHelperUtil.addGlobalErrorMessage("failed-to-add-x", "Entry");
+			LOGGER.error(e);
 		}
 	}
-	
-	public void select(Guestbook guestbook) {
 
-		if (guestbook == null) {
-			setSelectedGuestbook(null);
+	public List<EntryBean> getEntries(FacesContext facesContext) {
+
+		List<EntryBean> entries = Collections.emptyList();
+
+		try {
+			GuestbookManager guestbookManager = GuestbookManager.getGuestbookManager(facesContext);
+			entries = guestbookManager.getEntries(facesContext);
 		}
-		else {
-			setSelectedGuestbook(guestbook);
-		}
-
-		// force Guestbooks and Entries to reload
-		//setGuestbooks(null);
-		setEntries(null);
-
-		editingEntry = false;
-		//editingGuestbook = false;
-	}
-	
-	public void setEditingEntry(boolean editingEntry) {
-		this.editingEntry = editingEntry;
-	}
-
-	public List<Entry> getEntries() {
-
-		if (entries == null) {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			long scopeGroupId = LiferayPortletHelperUtil.getScopeGroupId(facesContext);
-
-			try {
-				EntryLocalService entryLocalService = entryLocalServiceTracker.getService();
-				entries = new ArrayList<Entry>();
-				Guestbook selectedGuestbook = getSelectedGuestbook();
-
-				if (selectedGuestbook == null) {
-					logger.info("getEntries: selectedGuestbook == null ... ");
-				}
-				else {
-					List<com.liferay.docs.guestbook.model.Entry> list = entryLocalService.getEntries(scopeGroupId,
-							selectedGuestbook.getGuestbookId());
-
-					for (com.liferay.docs.guestbook.model.Entry entry : list) {
-						entries.add(new Entry(entry));
-					}
-				}
-
-			}
-			catch (SystemException e) {
-				logger.error(e);
-			}
+		catch (GuestbookManager.UnableToObtainEntriesException e) {
+			FacesContextHelperUtil.addGlobalErrorMessage("failed-to-obtain-x", "Entries");
+			LOGGER.error(e);
 		}
 
 		return entries;
 	}
-
-	public void setEntries(List<Entry> entries) {
-		this.entries = entries;
-	}
-
-	public Entry getSelectedEntry() {
-		return selectedEntry;
-	}
-
-	public void setSelectedEntry(Entry selectedEntry) {
-		this.selectedEntry = new Entry(selectedEntry);
-	}
-
-	public Guestbook getSelectedGuestbook() {
-
-		if (selectedGuestbook == null) {
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			long scopeGroupId = LiferayPortletHelperUtil.getScopeGroupId(facesContext);
-
-			try {
-				GuestbookLocalService guestbookLocalService = guestbookLocalServiceTracker.getService();
-
-				com.liferay.docs.guestbook.model.Guestbook firstGuestbookByName =
-					(com.liferay.docs.guestbook.model.Guestbook) guestbookLocalService.getFirstGuestbookByName(
-						scopeGroupId, DEFAULT_GUESTBOOK_NAME);
-
-				if (firstGuestbookByName == null) {
-					logger.info("getSelectedGuestbook: No Guestbook named " + DEFAULT_GUESTBOOK_NAME);
-				}
-				else {
-					selectedGuestbook = new Guestbook(firstGuestbookByName);
-				}
-			}
-			catch (SystemException e) {
-				logger.error(e);
-			}
-		}
-
-		return selectedGuestbook;
-	}
-	
-	public void setSelectedGuestbook(Guestbook selectedGuestbook) {
-		this.selectedGuestbook = selectedGuestbook;
-	}
-	
-	public boolean isEditingEntry() {
-		return editingEntry;
-	}
-
 }
