@@ -13,15 +13,13 @@
  */
 package com.liferay.docs.guestbook.bean;
 
-import com.liferay.faces.util.context.FacesContextHelperUtil;
-import com.liferay.faces.util.logging.Logger;
-import com.liferay.faces.util.logging.LoggerFactory;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.faces.context.FacesContext;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -36,7 +34,7 @@ public class EntryBacking {
 
 	static final String NOT_BLANK_REGEX = "^[\\S\\s]*[\\S]+[\\S\\s]*$";
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EntryBacking.class);
+	private static final Logger LOGGER = Logger.getLogger(EntryBacking.class);
 
 	@Valid
 	private EntryBean entry;
@@ -58,7 +56,7 @@ public class EntryBacking {
 			navigationOutcome = "master";
 		}
 		catch (GuestbookManager.UnableToAddEntryException e) {
-			FacesContextHelperUtil.addGlobalErrorMessage(facesContext, "failed-to-add-x", "Entry");
+			I18n.addGlobalErrorMessage(facesContext, "failed-to-add-x", "Entry");
 			LOGGER.error(e);
 		}
 

@@ -13,14 +13,7 @@
  */
 package com.liferay.docs.guestbook.bean;
 
-import com.liferay.counter.kernel.service.CounterLocalService;
-import com.liferay.docs.guestbook.model.Entry;
-import com.liferay.docs.guestbook.model.Guestbook;
-import com.liferay.docs.guestbook.service.EntryLocalService;
-import com.liferay.docs.guestbook.service.GuestbookLocalService;
-import com.liferay.faces.portal.context.LiferayPortletHelperUtil;
-import com.liferay.faces.util.logging.Logger;
-import com.liferay.faces.util.logging.LoggerFactory;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,10 +22,6 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * <p>This {@link ApplicationScoped} bean encapsulates the database or service that manages
@@ -54,13 +43,7 @@ import org.osgi.util.tracker.ServiceTracker;
 @ApplicationScoped
 public class GuestbookManager {
 
-	private static final String DEFAULT_GUESTBOOK_NAME = "Main";
-	private static final Logger LOGGER = LoggerFactory.getLogger(GuestbookManager.class);
-
-	private ServiceTracker<CounterLocalService, CounterLocalService> counterLocalServiceTracker;
-	private ServiceTracker<EntryLocalService, EntryLocalService> entryLocalServiceTracker;
-	private ServiceTracker<GuestbookLocalService, GuestbookLocalService> guestbookLocalServiceTracker;
-	private Guestbook defaultGuestbook;
+	List<EntryDTO> guestbookEntriesMockDatabaseService;
 
 	/**
 	 * Adds an {@link com.liferay.docs.guestbook.model.Entry} (created from {@link EntryDTO}) to the current
@@ -73,29 +56,7 @@ public class GuestbookManager {
 	void addEntry(FacesContext facesContext, EntryDTO entryDTO) throws UnableToAddEntryException {
 
 		try {
-			CounterLocalService counterLocalService = counterLocalServiceTracker.getService();
-			long entryId = counterLocalService.increment(Entry.class.getName());
-			EntryLocalService entryLocalService = entryLocalServiceTracker.getService();
-			Entry entry = entryLocalService.createEntry(entryId);
-
-			long companyId = LiferayPortletHelperUtil.getCompanyId(facesContext);
-			entry.setCompanyId(companyId);
-
-			long guestbookId = defaultGuestbook.getGuestbookId();
-			entry.setGuestbookId(guestbookId);
-
-			long scopeGroupId = LiferayPortletHelperUtil.getScopeGroupId(facesContext);
-			entry.setGroupId(scopeGroupId);
-
-			String message = entryDTO.getMessage();
-			entry.setMessage(message);
-
-			String name = entryDTO.getName();
-			entry.setName(name);
-
-			long userId = LiferayPortletHelperUtil.getUserId(facesContext);
-			entry.setUserId(userId);
-			entryLocalService.addEntry(entry);
+			guestbookEntriesMockDatabaseService.add(entryDTO);
 		}
 		catch (Exception e) {
 			throw new UnableToAddEntryException(e);
@@ -111,11 +72,7 @@ public class GuestbookManager {
 	List<EntryDTO> getEntries(FacesContext facesContext) throws UnableToObtainEntriesException {
 
 		try {
-			EntryLocalService entryLocalService = entryLocalServiceTracker.getService();
-			long scopeGroupId = LiferayPortletHelperUtil.getScopeGroupId(facesContext);
-			long guestbookId = defaultGuestbook.getGuestbookId();
-			List<Entry> entries = entryLocalService.getEntries(scopeGroupId, guestbookId);
-			return Collections.unmodifiableList(entries.stream().map((entry) -> {
+			return Collections.unmodifiableList(guestbookEntriesMockDatabaseService.stream().map((entry) -> {
 				return new UnmodifiableEntryDTO(entry.getMessage(), entry.getName());
 			}).collect(Collectors.toList()));
 		}
@@ -126,49 +83,12 @@ public class GuestbookManager {
 
 	@PostConstruct
 	public void postConstruct() {
-
-		Bundle bundle = FrameworkUtil.getBundle(this.getClass());
-		BundleContext bundleContext = bundle.getBundleContext();
-		guestbookLocalServiceTracker = new ServiceTracker<>(bundleContext, GuestbookLocalService.class, null);
-		guestbookLocalServiceTracker.open();
-		counterLocalServiceTracker = new ServiceTracker<>(bundleContext, CounterLocalService.class, null);
-		counterLocalServiceTracker.open();
-		entryLocalServiceTracker = new ServiceTracker<>(bundleContext, EntryLocalService.class, null);
-		entryLocalServiceTracker.open();
-
-		try {
-
-			FacesContext facesContext = FacesContext.getCurrentInstance();
-			long scopeGroupId = LiferayPortletHelperUtil.getScopeGroupId(facesContext);
-			GuestbookLocalService guestbookLocalService = guestbookLocalServiceTracker.getService();
-			defaultGuestbook = (Guestbook) guestbookLocalService.getFirstGuestbookByName(scopeGroupId,
-				DEFAULT_GUESTBOOK_NAME);
-
-			// Create the default guestbook if it does not exist in the database
-			if (defaultGuestbook == null) {
-				LOGGER.info("postConstruct: creating a default guestbook named " + DEFAULT_GUESTBOOK_NAME + " ...");
-
-				CounterLocalService counterLocalService = counterLocalServiceTracker.getService();
-				long guestbookId = counterLocalService.increment(Guestbook.class.getName());
-				defaultGuestbook = guestbookLocalService.createGuestbook(guestbookId);
-				defaultGuestbook.setName(DEFAULT_GUESTBOOK_NAME);
-				defaultGuestbook.setGroupId(scopeGroupId);
-				defaultGuestbook.setCompanyId(LiferayPortletHelperUtil.getCompanyId(facesContext));
-				defaultGuestbook.setUserId(LiferayPortletHelperUtil.getUserId(facesContext));
-				guestbookLocalService.addGuestbook(defaultGuestbook);
-			}
-		}
-		catch (Exception e) {
-			throw new RuntimeException("Unable to create or obtain the default guestbook.", e);
-		}
+		guestbookEntriesMockDatabaseService = Collections.synchronizedList(new ArrayList<>());
 	}
 
 	@PreDestroy
 	public void preDestroy() {
-
-		entryLocalServiceTracker.close();
-		counterLocalServiceTracker.close();
-		guestbookLocalServiceTracker.close();
+		// no-op
 	}
 
 	static final class UnableToAddEntryException extends Exception {
