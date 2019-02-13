@@ -52,21 +52,13 @@ public final class GuestbookManager {
 	private ServiceTracker<GuestbookLocalService, GuestbookLocalService> guestbookLocalServiceTracker;
 	private Guestbook defaultGuestbook;
 
-	static GuestbookManager getGuestbookManager(FacesContext facesContext) {
-
-		// Use Application.evaluateExpressionGet() (instead of ApplicationMap.get()) to ensure that this bean is
-		// instantiated before it is provided to the caller.
-		return (GuestbookManager) facesContext.getApplication()
-				.evaluateExpressionGet(facesContext, "#{guestbookManager}", GuestbookManager.class);
-	}
-
 	/**
-	 * Adds an {@link Entry} (created from {@link EntryBean}) to the current {@link Guestbook}.
+	 * Adds an {@link Entry} (created from {@link EntryDTO}) to the current {@link Guestbook}.
 	 * @param facesContext the current {@link FacesContext}.
 	 * @param entryBean the data-transfer-object of the Entry to add to the current Guestbook.
 	 * @throws com.liferay.docs.guestbook.bean.GuestbookManager.UnableToAddEntryException 
 	 */
-	void addEntry(FacesContext facesContext, EntryBean entryBean) throws UnableToAddEntryException {
+	void addEntry(FacesContext facesContext, EntryDTO entryDTO) throws UnableToAddEntryException {
 
 		try {
 			CounterLocalService counterLocalService = counterLocalServiceTracker.getService();
@@ -83,10 +75,10 @@ public final class GuestbookManager {
 			long scopeGroupId = LiferayPortletHelperUtil.getScopeGroupId(facesContext);
 			entry.setGroupId(scopeGroupId);
 
-			String message = entryBean.getMessage();
+			String message = entryDTO.getMessage();
 			entry.setMessage(message);
 
-			String name = entryBean.getName();
+			String name = entryDTO.getName();
 			entry.setName(name);
 
 			long userId = LiferayPortletHelperUtil.getUserId(facesContext);
@@ -99,12 +91,12 @@ public final class GuestbookManager {
 	}
 
 	/**
-	 * @return a {@link Collections#unmodifiableList(java.util.List)} of {@link EntryBean} items from the current
+	 * @return a {@link Collections#unmodifiableList(java.util.List)} of {@link EntryDTO} items from the current
 	 *         {@link Guestbook}.
 	 * @throws com.liferay.docs.guestbook.bean.GuestbookManager.UnableToObtainEntriesException when the entries in the
 	 *         current {@link Guestbook} cannot be obtained.
 	 */
-	List<EntryBean> getEntries(FacesContext facesContext) throws UnableToObtainEntriesException {
+	List<EntryDTO> getEntries(FacesContext facesContext) throws UnableToObtainEntriesException {
 
 		try {
 			EntryLocalService entryLocalService = entryLocalServiceTracker.getService();
@@ -112,7 +104,7 @@ public final class GuestbookManager {
 			long guestbookId = defaultGuestbook.getGuestbookId();
 			List<Entry> entries = entryLocalService.getEntries(scopeGroupId, guestbookId);
 			return Collections.unmodifiableList(entries.stream().map((entry) -> {
-				return new EntryBean(entry.getMessage(), entry.getName());
+				return new UnmodifiableEntryDTO(entry.getMessage(), entry.getName());
 			}).collect(Collectors.toList()));
 		}
 		catch (Exception e) {
@@ -182,6 +174,27 @@ public final class GuestbookManager {
 
 		UnableToObtainEntriesException(Throwable cause) {
 			super(cause);
+		}
+	}
+
+	private static final class UnmodifiableEntryDTO implements EntryDTO {
+
+		private final String message;
+		private final String name;
+
+		public UnmodifiableEntryDTO(String message, String name) {
+			this.message = message;
+			this.name = name;
+		}
+
+		@Override
+		public String getMessage() {
+			return message;
+		}
+
+		@Override
+		public String getName() {
+			return name;
 		}
 	}
 }

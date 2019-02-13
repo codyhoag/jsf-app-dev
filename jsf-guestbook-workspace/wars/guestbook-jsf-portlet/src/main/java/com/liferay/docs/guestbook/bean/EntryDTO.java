@@ -14,36 +14,10 @@
 package com.liferay.docs.guestbook.bean;
 
 /**
+ *
  * @author Kyle Stiemann
  */
-public final class EntryBean {
-
-	private String message;
-	private String name;
-
-	public EntryBean() {
-	}
-
-	public EntryBean(String message, String name) {
-		this();
-		this.message = message;
-		this.name = name;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
+public interface EntryDTO {
+	public String getMessage();
+	public String getName();
 }

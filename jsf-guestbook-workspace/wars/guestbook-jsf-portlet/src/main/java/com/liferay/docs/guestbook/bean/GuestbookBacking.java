@@ -19,7 +19,7 @@ import com.liferay.faces.util.logging.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 
 
@@ -28,57 +28,25 @@ import javax.faces.context.FacesContext;
  * @author Kyle Stiemann
  */
 @ManagedBean
-@ViewScoped
+@RequestScoped
 public final class GuestbookBacking {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GuestbookBacking.class);
 
-	private EntryBean newEntry;
+	private List<EntryDTO> entries;
 
-	public void addNewEntry() {
-		setNewEntry(new EntryBean());
-	}
+	public List<EntryDTO> getEntries(FacesContext facesContext, GuestbookManager guestbookManager) {
 
-	public void clearNewEntry() {
-		setNewEntry(null);
-	}
+		if (entries == null) {
+			entries = Collections.emptyList();
 
-	public boolean isAddingNewEntry() {
-		return newEntry != null;
-	}
-
-	public EntryBean getNewEntry() {
-		return newEntry;
-	}
-
-	public void setNewEntry(EntryBean entry) {
-		this.newEntry = entry;
-	}
-
-	public void saveNewEntry(FacesContext facesContext) {
-		GuestbookManager guestbookManager = GuestbookManager.getGuestbookManager(facesContext);
-
-		try {
-			guestbookManager.addEntry(facesContext, newEntry);
-			clearNewEntry();
-		}
-		catch (GuestbookManager.UnableToAddEntryException e) {
-			FacesContextHelperUtil.addGlobalErrorMessage("failed-to-add-x", "Entry");
-			LOGGER.error(e);
-		}
-	}
-
-	public List<EntryBean> getEntries(FacesContext facesContext) {
-
-		List<EntryBean> entries = Collections.emptyList();
-
-		try {
-			GuestbookManager guestbookManager = GuestbookManager.getGuestbookManager(facesContext);
-			entries = guestbookManager.getEntries(facesContext);
-		}
-		catch (GuestbookManager.UnableToObtainEntriesException e) {
-			FacesContextHelperUtil.addGlobalErrorMessage("failed-to-obtain-x", "Entries");
-			LOGGER.error(e);
+			try {
+				entries = guestbookManager.getEntries(facesContext);
+			}
+			catch (GuestbookManager.UnableToObtainEntriesException e) {
+				FacesContextHelperUtil.addGlobalErrorMessage(facesContext, "failed-to-obtain-x", "Entries");
+				LOGGER.error(e);
+			}
 		}
 
 		return entries;

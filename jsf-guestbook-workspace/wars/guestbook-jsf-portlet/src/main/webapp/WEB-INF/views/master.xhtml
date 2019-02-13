@@ -5,37 +5,36 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="./view.xhtml">
 
-	<h:form>
-		<h:commandButton action="#{guestbookBacking.addNewEntry}" styleClass="btn btn-default"
-				value=" #{i18n['add-entry']} ">
-			<f:ajax render="@all" />
-		</h:commandButton>
+	<ui:define name="content">
+		<h:form>
+			<h:commandButton action="entry" styleClass="btn btn-default"
+					value=" #{i18n['add-entry']} ">
+				<f:ajax render="@all" />
+			</h:commandButton>
+		</h:form>
 		<br /><br />
+		<h:outputText rendered="#{empty guestbookBacking.getEntries(facesContext, guestbookManager)}"
+				value="#{i18n['no-entries-yet']}" />
+		<h:dataTable rendered="#{not empty guestbookBacking.getEntries(facesContext, guestbookManager)}"
+				rowClasses="table-cell " styleClass="table table-bordered table-hover table-striped"
+				value="#{guestbookBacking.getEntries(facesContext, guestbookManager)}" var="entry">
+			<h:column>
+				<f:facet name="header"><h:outputText value="#{i18n['message']}" /></f:facet>
+				<h:panelGroup>
+					<h:outputText value="#{entry.message}" />
+				</h:panelGroup>
+			</h:column>
+			<h:column>
+				<f:facet name="header"><h:outputText value="#{i18n['name']}" /></f:facet>
+				<h:panelGroup>
+					<h:outputText value="#{entry.name}" />
+				</h:panelGroup>
+			</h:column>
+		</h:dataTable>
 		<h:messages globalOnly="true" />
-		<c:choose>
-			<c:when test="#{empty guestbookBacking.getEntries(facesContext)}">
-				<h:outputText value="#{i18n['no-entries-yet']}" />
-			</c:when>
-			<c:otherwise>
-				<h:dataTable styleClass="table table-bordered table-hover table-striped" rowClasses="table-cell "
-						value="#{guestbookBacking.getEntries(facesContext)}" var="entry">
-					<h:column>
-						<f:facet name="header"><h:outputText value="#{i18n['message']}" /></f:facet>
-						<h:panelGroup>
-							<h:outputText value="#{entry.message}" />
-						</h:panelGroup>
-					</h:column>
-					<h:column>
-						<f:facet name="header"><h:outputText value="#{i18n['name']}" /></f:facet>
-						<h:panelGroup>
-							<h:outputText value="#{entry.name}" />
-						</h:panelGroup>
-					</h:column>
-				</h:dataTable>
-			</c:otherwise>
-		</c:choose>
-	</h:form>
+	</ui:define>
 
 </ui:composition>

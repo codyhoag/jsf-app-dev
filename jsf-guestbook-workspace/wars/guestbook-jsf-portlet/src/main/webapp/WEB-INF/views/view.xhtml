@@ -12,13 +12,6 @@
 		<h:outputScript library="js" name="main.js" />
 	</h:head>
 	<h:body>
-		<c:choose>
-			<c:when test="#{guestbookBacking.addingNewEntry}">
-				<ui:include src="/WEB-INF/views/entry.xhtml" />
-			</c:when>
-			<c:otherwise>
-				<ui:include src="/WEB-INF/views/master.xhtml" />
-			</c:otherwise>
-		</c:choose>
+		<ui:insert name="content" />
 	</h:body>
 </f:view>
