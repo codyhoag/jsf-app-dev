@@ -14,7 +14,12 @@
 package com.liferay.docs.guestbook.bean;
 
 /**
- *
+ * "Data Transfer Object" (DTO) interface for an {@link com.liferay.docs.guestbook.model.Entry}. This interface
+ * encapsulates the minimum necessary elements of an Entry in order to simplify the creation and transfer of Entries
+ * between with JSF MVC classes such as beans. For example: in
+ * {@link EntryBacking#saveNewEntry(javax.faces.context.FacesContext, com.liferay.docs.guestbook.bean.GuestbookManager)},
+ * instead of creating a new full implementation of an Entry, a simpler implementation of EntryDTO can be created.
+ * 
  * @author Kyle Stiemann
  */
 public interface EntryDTO {

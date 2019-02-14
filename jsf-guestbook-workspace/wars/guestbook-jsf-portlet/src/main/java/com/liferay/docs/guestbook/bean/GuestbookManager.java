@@ -35,8 +35,18 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * This class must be thread-safe. {@link PostConstruct} and {@link PreDestroy} are executed in a single-threaded
- * environment.
+ * <p>This {@link ApplicationScoped} bean encapsulates the database or service that manages
+ * {@link com.liferay.docs.guestbook.model.Guestbook}s providing a simple interface that backing beans can utilize to
+ * add or obtain entries from the default Guestbook. This class ensures that:</p>
+ * 
+ * <p>1. JSF backing beans can create and obtain entries without full, direct knowledge of the underlying service API or
+ *    database that is required to manage a Guestbook. Backing beans and views are more portable this way.</p>
+ * <p>2. {@link org.osgi.util.tracker.ServiceTracker}s for services are only created once in the {@link PostConstruct}.
+ * </p>
+ * <p>3. The default Guestbook is only obtained or created once in the PostConstruct.</p>
+ * 
+ * <p>This class must be thread-safe. {@link PostConstruct} and {@link PreDestroy} are executed in a single-threaded
+ * environment.</p>
  * 
  * @author Kyle Stiemann
  */
@@ -53,10 +63,12 @@ public final class GuestbookManager {
 	private Guestbook defaultGuestbook;
 
 	/**
-	 * Adds an {@link Entry} (created from {@link EntryDTO}) to the current {@link Guestbook}.
+	 * Adds an {@link com.liferay.docs.guestbook.model.Entry} (created from {@link EntryDTO}) to the current
+	 * {@link com.liferay.docs.guestbook.model.Guestbook}.
 	 * @param facesContext the current {@link FacesContext}.
-	 * @param entryBean the data-transfer-object of the Entry to add to the current Guestbook.
-	 * @throws com.liferay.docs.guestbook.bean.GuestbookManager.UnableToAddEntryException 
+	 * @param entryDTO the data-transfer-object of the Entry to add to the current Guestbook.
+	 * @throws com.liferay.docs.guestbook.bean.GuestbookManager.UnableToAddEntryException when an entry cannot be added
+	 *         to the current Guestbook.
 	 */
 	void addEntry(FacesContext facesContext, EntryDTO entryDTO) throws UnableToAddEntryException {
 
@@ -92,9 +104,9 @@ public final class GuestbookManager {
 
 	/**
 	 * @return a {@link Collections#unmodifiableList(java.util.List)} of {@link EntryDTO} items from the current
-	 *         {@link Guestbook}.
+	 *         {@link com.liferay.docs.guestbook.model.Guestbook}.
 	 * @throws com.liferay.docs.guestbook.bean.GuestbookManager.UnableToObtainEntriesException when the entries in the
-	 *         current {@link Guestbook} cannot be obtained.
+	 *         current Guestbook cannot be obtained.
 	 */
 	List<EntryDTO> getEntries(FacesContext facesContext) throws UnableToObtainEntriesException {
 

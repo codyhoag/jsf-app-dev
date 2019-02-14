@@ -24,6 +24,8 @@ import javax.faces.context.FacesContext;
 
 
 /**
+ * Backing bean for the <code>master.xhtml</code> view.
+ * 
  * @author Cody Hoag
  * @author Kyle Stiemann
  */
