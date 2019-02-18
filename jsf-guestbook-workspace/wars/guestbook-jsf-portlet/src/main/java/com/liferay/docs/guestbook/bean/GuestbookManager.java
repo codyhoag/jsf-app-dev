@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.faces.bean.ApplicationScoped;
-import javax.faces.bean.ManagedBean;
+import javax.enterprise.context.ApplicationScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -50,9 +50,9 @@ import org.osgi.util.tracker.ServiceTracker;
  * 
  * @author Kyle Stiemann
  */
-@ManagedBean
+@Named
 @ApplicationScoped
-public final class GuestbookManager {
+public class GuestbookManager {
 
 	private static final String DEFAULT_GUESTBOOK_NAME = "Main";
 	private static final Logger LOGGER = LoggerFactory.getLogger(GuestbookManager.class);

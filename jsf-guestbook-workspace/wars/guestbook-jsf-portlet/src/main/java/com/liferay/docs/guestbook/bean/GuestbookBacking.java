@@ -18,9 +18,9 @@ import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 
 
 /**
@@ -29,9 +29,9 @@ import javax.faces.context.FacesContext;
  * @author Cody Hoag
  * @author Kyle Stiemann
  */
-@ManagedBean
+@Named
 @RequestScoped
-public final class GuestbookBacking {
+public class GuestbookBacking {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GuestbookBacking.class);
 

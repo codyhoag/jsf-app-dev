@@ -16,9 +16,9 @@ package com.liferay.docs.guestbook.bean;
 import com.liferay.faces.util.context.FacesContextHelperUtil;
 import com.liferay.faces.util.logging.Logger;
 import com.liferay.faces.util.logging.LoggerFactory;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 
 
 /**
@@ -27,9 +27,9 @@ import javax.faces.context.FacesContext;
  * @author Cody Hoag
  * @author Kyle Stiemann
  */
-@ManagedBean
+@Named
 @RequestScoped
-public final class EntryBacking {
+public class EntryBacking {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EntryBacking.class);
 
@@ -63,7 +63,7 @@ public final class EntryBacking {
 		return navigationOutcome;
 	}
 
-	public static final class EntryBean implements EntryDTO {
+	public static class EntryBean implements EntryDTO {
 
 		private String message;
 		private String name;
