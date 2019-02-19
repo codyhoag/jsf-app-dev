@@ -15,10 +15,16 @@ dependencies {
 	runtime group: 'com.liferay.faces', name: 'com.liferay.faces.bridge.ext', version: '5.0.3'
 	runtime group: 'com.liferay.faces', name: 'com.liferay.faces.bridge.impl', version: '4.1.2'
 	compile group: 'com.liferay.faces', name: 'com.liferay.faces.portal', version: '3.0.3'
-	runtime group: 'org.jboss.weld.servlet', name: 'weld-servlet', version: '2.3.5.Final'
+	runtime group: 'org.jboss.weld.servlet', name: 'weld-servlet', version: '2.4.8.Final'
 	providedCompile group: 'javax.enterprise', name: 'cdi-api', version: '1.2'
+	runtime group: 'org.hibernate', name: 'hibernate-validator', version: '5.4.3.Final'
+	runtime group: 'org.hibernate', name: 'hibernate-validator-cdi', version: '5.4.3.Final'
+	runtime group: 'org.hibernate', name: 'hibernate-validator-annotation-processor', version: '5.4.3.Final'
+	compile group: 'javax.validation', name: 'validation-api', version: '1.1.0.Final'
 	providedCompile group: 'log4j', name: 'log4j', version:'1.2.14'
 	providedCompile group: 'javax.faces', name: 'javax.faces-api', version:'2.2'
 	compileOnly project(":modules:guestbook:guestbook-api")
-    compileOnly project(":modules:guestbook:guestbook-service")
+	compileOnly project(":modules:guestbook:guestbook-service")
+
+	testCompile group: 'junit', name: 'junit', version: '4.12'
 }

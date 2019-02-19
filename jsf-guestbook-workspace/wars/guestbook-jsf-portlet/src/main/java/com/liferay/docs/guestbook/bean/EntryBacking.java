@@ -19,6 +19,9 @@ import com.liferay.faces.util.logging.LoggerFactory;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 
 /**
@@ -31,8 +34,11 @@ import javax.inject.Named;
 @RequestScoped
 public class EntryBacking {
 
+	static final String NOT_BLANK_REGEX = "^[\\S\\s]*[\\S]+[\\S\\s]*$";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(EntryBacking.class);
 
+	@Valid
 	private EntryBean entry;
 
 	public EntryBean getEntry() {
@@ -42,10 +48,6 @@ public class EntryBacking {
 		}
 
 		return entry;
-	}
-
-	public void setEntry(EntryBean entry) {
-		this.entry = entry;
 	}
 
 	public String saveNewEntry(FacesContext facesContext, GuestbookManager guestbookManager) {
@@ -65,7 +67,15 @@ public class EntryBacking {
 
 	public static class EntryBean implements EntryDTO {
 
+		private static final String VALUE_IS_REQUIRED_MESSAGE_KEY = "{value-is-required}";
+		private static final String VALUE_MUST_NOT_BE_BLANK_MESSAGE_KEY = "{value-must-not-be-blank}";
+
+		@Pattern(message = VALUE_MUST_NOT_BE_BLANK_MESSAGE_KEY, regexp = NOT_BLANK_REGEX)
+		@NotNull(message = VALUE_IS_REQUIRED_MESSAGE_KEY)
 		private String message;
+
+		@Pattern(message = VALUE_MUST_NOT_BE_BLANK_MESSAGE_KEY, regexp = NOT_BLANK_REGEX)
+		@NotNull(message = VALUE_IS_REQUIRED_MESSAGE_KEY)
 		private String name;
 
 		@Override
