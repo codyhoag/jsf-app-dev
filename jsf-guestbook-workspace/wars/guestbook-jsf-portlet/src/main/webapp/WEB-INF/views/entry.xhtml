@@ -14,12 +14,12 @@
 			<h:outputLabel for="entryName">Name: </h:outputLabel>
 			<br />
 			<h:message for="entryName" />
-			<h:inputText id="entryName" value="#{entryBacking.entry.name}" />
+			<h:inputText id="entryName" required="true" value="#{entryBacking.entry.name}" />
 			<br /><br />
 			<h:outputLabel for="entryMessage">Message: </h:outputLabel>
 			<br />
 			<h:message for="entryMessage" />
-			<h:inputTextarea id="entryMessage" value="#{entryBacking.entry.message}" />
+			<h:inputTextarea id="entryMessage" required="true" value="#{entryBacking.entry.message}" />
 			<br /><br />
 			<h:commandButton action="#{entryBacking.saveNewEntry(facesContext, guestbookManager)}"
 					styleClass="btn btn-default" value="#{i18n['save']}">
