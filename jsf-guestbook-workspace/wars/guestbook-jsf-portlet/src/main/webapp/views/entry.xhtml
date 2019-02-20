@@ -9,7 +9,7 @@
 
 	<ui:define name="content">
 		<h:form>
-			<h3>#{i18n.getMessage(facesContext, 'new-entry')}</h3>
+			<h3>#{i18n['new-entry']}</h3>
 			<br />
 			<h:outputLabel for="entryName">Name: </h:outputLabel>
 			<br />
@@ -22,11 +22,11 @@
 			<h:inputTextarea id="entryMessage" required="true" value="#{entryBacking.entry.message}" />
 			<br /><br />
 			<h:commandButton action="#{entryBacking.saveNewEntry(facesContext, guestbookManager)}"
-					styleClass="btn btn-default" value="#{i18n.getMessage(facesContext, 'save')}">
+					styleClass="btn btn-default" value="#{i18n['save']}">
 				<f:ajax execute="@form" render="@all" />
 			</h:commandButton>
 			<h:commandButton action="master" immediate="true" styleClass="btn btn-default"
-					value="#{i18n.getMessage(facesContext, 'cancel')}">
+					value="#{i18n['cancel']}">
 				<f:ajax render="@all" />
 			</h:commandButton>
 			<h:messages globalOnly="true" />

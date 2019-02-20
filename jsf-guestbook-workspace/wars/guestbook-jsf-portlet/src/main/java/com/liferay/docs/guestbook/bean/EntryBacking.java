@@ -56,7 +56,7 @@ public class EntryBacking {
 			navigationOutcome = "master";
 		}
 		catch (GuestbookManager.UnableToAddEntryException e) {
-			I18n.addGlobalErrorMessage(facesContext, "failed-to-add-x", "Entry");
+			I18nUtil.addGlobalErrorMessage(facesContext, "failed-to-add-x", "Entry");
 			LOGGER.error(e);
 		}
 
