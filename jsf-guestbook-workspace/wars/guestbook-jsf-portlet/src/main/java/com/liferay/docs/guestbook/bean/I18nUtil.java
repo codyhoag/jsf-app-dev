@@ -18,24 +18,16 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
 /**
  * @author Kyle Stiemann
  */
-@ManagedBean
-@RequestScoped
-public final class I18n {
+public final class I18nUtil {
 
 	static void addGlobalErrorMessage(FacesContext facesContext, String pattern, Object... arguments) {
-		String message = getI18nMessage(facesContext, pattern, arguments);
-		facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, message, message));
-	}
 
-	private static String getI18nMessage(FacesContext facesContext, String pattern, Object... arguments) {
 		UIViewRoot viewRoot = facesContext.getViewRoot();
 		Locale locale = viewRoot.getLocale();
 		ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n", locale);
@@ -52,10 +44,6 @@ public final class I18n {
 			message = pattern;
 		}
 
-		return message;
-	}
-
-	public String getMessage(FacesContext facesContext, String pattern) {
-		return getI18nMessage(facesContext, pattern);
+		facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, message, message));
 	}
 }

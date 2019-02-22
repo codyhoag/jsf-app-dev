@@ -44,7 +44,7 @@ public class GuestbookBacking {
 				entries = guestbookManager.getEntries(facesContext);
 			}
 			catch (GuestbookManager.UnableToObtainEntriesException e) {
-				I18n.addGlobalErrorMessage(facesContext, "failed-to-obtain-x", "Entries");
+				I18nUtil.addGlobalErrorMessage(facesContext, "failed-to-obtain-x", "Entries");
 				LOGGER.error(e);
 			}
 		}

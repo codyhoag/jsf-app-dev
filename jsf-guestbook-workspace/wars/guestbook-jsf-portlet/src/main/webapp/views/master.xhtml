@@ -11,24 +11,24 @@
 	<ui:define name="content">
 		<h:form>
 			<h:commandButton action="entry" styleClass="btn btn-default"
-					value=" #{i18n.getMessage(facesContext, 'add-entry')} ">
+					value=" #{i18n['add-entry']} ">
 				<f:ajax render="@all" />
 			</h:commandButton>
 		</h:form>
 		<br /><br />
 		<h:outputText rendered="#{empty guestbookBacking.getEntries(facesContext, guestbookManager)}"
-				value="#{i18n.getMessage(facesContext, 'no-entries-yet')}" />
+				value="#{i18n['no-entries-yet']}" />
 		<h:dataTable rendered="#{not empty guestbookBacking.getEntries(facesContext, guestbookManager)}"
 				rowClasses="table-cell " styleClass="table table-bordered table-hover table-striped"
 				value="#{guestbookBacking.getEntries(facesContext, guestbookManager)}" var="entry">
 			<h:column>
-				<f:facet name="header"><h:outputText value="#{i18n.getMessage(facesContext, 'message')}" /></f:facet>
+				<f:facet name="header"><h:outputText value="#{i18n['message']}" /></f:facet>
 				<h:panelGroup>
 					<h:outputText value="#{entry.message}" />
 				</h:panelGroup>
 			</h:column>
 			<h:column>
-				<f:facet name="header"><h:outputText value="#{i18n.getMessage(facesContext, 'name')}" /></f:facet>
+				<f:facet name="header"><h:outputText value="#{i18n['name']}" /></f:facet>
 				<h:panelGroup>
 					<h:outputText value="#{entry.name}" />
 				</h:panelGroup>
