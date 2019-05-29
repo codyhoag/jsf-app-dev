@@ -19,8 +19,6 @@ import com.liferay.docs.guestbook.model.Guestbook;
 import com.liferay.docs.guestbook.service.EntryLocalService;
 import com.liferay.docs.guestbook.service.GuestbookLocalService;
 import com.liferay.faces.portal.context.LiferayPortletHelperUtil;
-import com.liferay.faces.util.logging.Logger;
-import com.liferay.faces.util.logging.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +31,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
+import org.apache.log4j.Logger;
 
 /**
  * <p>This {@link ApplicationScoped} bean encapsulates the database or service that manages
@@ -55,7 +54,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class GuestbookManager {
 
 	private static final String DEFAULT_GUESTBOOK_NAME = "Main";
-	private static final Logger LOGGER = LoggerFactory.getLogger(GuestbookManager.class);
+	private static final Logger LOGGER = Logger.getLogger(GuestbookManager.class);
 
 	private ServiceTracker<CounterLocalService, CounterLocalService> counterLocalServiceTracker;
 	private ServiceTracker<EntryLocalService, EntryLocalService> entryLocalServiceTracker;

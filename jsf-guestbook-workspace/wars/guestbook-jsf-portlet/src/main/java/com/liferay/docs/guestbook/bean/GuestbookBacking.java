@@ -14,13 +14,12 @@
 package com.liferay.docs.guestbook.bean;
 
 import com.liferay.faces.util.context.FacesContextHelperUtil;
-import com.liferay.faces.util.logging.Logger;
-import com.liferay.faces.util.logging.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -33,7 +32,7 @@ import javax.inject.Named;
 @RequestScoped
 public class GuestbookBacking {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(GuestbookBacking.class);
+	private static final Logger LOGGER = Logger.getLogger(GuestbookBacking.class);
 
 	private List<EntryDTO> entries;
 
