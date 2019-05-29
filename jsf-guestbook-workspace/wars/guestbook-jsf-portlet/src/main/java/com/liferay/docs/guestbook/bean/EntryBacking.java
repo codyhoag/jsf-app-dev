@@ -14,11 +14,11 @@
 package com.liferay.docs.guestbook.bean;
 
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 
 
